@@ -4,6 +4,7 @@
 #include <stddef.h>
 
 #define SHA1_LENGTH 20
+#define SHA1_STR_LENGTH 40
 
 enum TwigObjectType {
     OBJ_BLOB,
@@ -34,6 +35,8 @@ void twigobject_hash(TwigObject *object, unsigned char *out_hash);
  */
 void twigobject_write(TwigObject *object, char *twig_root);
 
+
+TwigObject *twigobject_read(char *hash, char *twig_root);
 
 /**
  * Converts a TwigObjectType into its string representation in the header

@@ -116,3 +116,107 @@ void twigobject_write(TwigObject *object, char *twig_root) {
 }
 
 
+TwigObject *twigobject_read(char *hex_hash, char *twig_root) {
+
+    // construct paths
+    // .twig/objects/xx/yyyy... path
+    char *objects_dir = ".twig/objects";
+
+    char *objects_path = build_path(twig_root, objects_dir);
+
+    char subdir[3];
+    strncpy(subdir, hex_hash, 2);
+    subdir[2] = '\0';
+
+    char *file_name = hex_hash + 2; // file name of object is hash without first byte
+
+    char *dir_path = build_path(objects_path, subdir);
+    char *file_path = build_path(dir_path, file_name);
+
+
+
+    // read compressed object
+    FILE *f = fopen(file_path, "rb");
+    if (!f) {
+        perror(file_path);
+        return NULL;
+    }
+
+    fseek(f, 0, SEEK_END);
+    long compressed_size = ftell(f);
+    rewind(f);
+
+    Bytef *compressed_contents = malloc(compressed_size);
+    fread(compressed_contents, 1, compressed_size, f);
+    fclose(f);
+
+    z_stream zs = {0};
+    zs.next_in  = compressed_contents; /* input pointer */
+    zs.avail_in = compressed_size; /* input len */
+
+    if (inflateInit(&zs) != Z_OK) {
+        return NULL;
+    }
+
+    size_t cap = 8192; // 8kib
+    size_t used = 0;
+    unsigned char *deflated_contents = malloc(cap);
+
+    int status;
+    do {
+        if (used == cap) {
+            cap *= 2;
+            deflated_contents = realloc(deflated_contents, cap);
+        }
+
+        zs.next_out = deflated_contents + used;
+        zs.avail_out = cap - used;
+
+        status = inflate(&zs, Z_NO_FLUSH);
+        used = cap - zs.avail_out;
+
+    } while (status == Z_OK);
+
+    inflateEnd(&zs);
+    free(compressed_contents);
+
+
+    if (status != Z_STREAM_END) {
+        return NULL;
+    }
+
+    // parse the header
+    size_t header_len = 0;
+
+    while(header_len < used && deflated_contents[header_len] != '\0') {
+        header_len++;
+    }
+
+    if (header_len == used) {
+        fprintf(stderr, "corrupt object\n");
+        return NULL;
+    }
+
+    int payload_length = used - (header_len + 1); // for null character
+    unsigned char *payload = deflated_contents + header_len + 1;
+
+    // sanity check
+    int size_start = strcspn((char *)deflated_contents, " ") + 1;
+    int declared_payload_length = strtoul((char *)deflated_contents + size_start, NULL, 10);
+
+    if (declared_payload_length != payload_length) {
+        fprintf(stderr, "corrupt object\n");
+        return NULL;
+    }
+
+    TwigObject *twigObject = malloc(sizeof(TwigObject));
+    twigObject->content_size = payload_length;
+    twigObject->type = OBJ_BLOB;
+    twigObject->contents = malloc(payload_length);
+    memcpy(twigObject->contents, payload, payload_length);
+
+    return twigObject;
+
+}
+
+

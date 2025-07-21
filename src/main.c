@@ -6,6 +6,7 @@
 #include "object.h"
 #include "cmd/cmd_init.h"
 #include "cmd/cmd_hash_object.h"
+#include "cmd/cmd_cat_file.h"
 #include "repo.h"
 #include "utils.h"
 
@@ -15,7 +16,8 @@ static struct {
     int (*fn)(int, char **, Repo *);
 } cmd_table[] = {
         {"init", cmd_init},
-        {"hash-object", cmd_hash_object}
+        {"hash-object", cmd_hash_object},
+        {"cat-file", cmd_cat_file}
 };
 
 

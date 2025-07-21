@@ -1,0 +1,5 @@
+*.o
+.idea/*
+.twig/
+twig
+cmake-build-debug

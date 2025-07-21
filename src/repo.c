@@ -4,9 +4,37 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
+static int is_curr_twig_repo(char *path);
+static char *find_twig_repo(char *path);
+static int path_exists_and_is_dir(char *path);
+static int path_exists_and_is_file(char *path);
 
-int path_exists_and_is_dir(char *path) {
+Repo *repo_open(char *rel_path) {
+    char *abs_path = realpath(rel_path, NULL);
+
+    char *twig_root = find_twig_repo(abs_path);
+    if (twig_root == NULL) {
+        return NULL;
+    }
+
+    char *dottwig_path = build_path(twig_root, ".twig");
+    char *objects_path = build_path(twig_root, ".twig/objects");
+    char *refs_path = build_path(twig_root, ".twig/refs");
+
+    Repo *repo = malloc(sizeof(Repo));
+    repo->root_path = twig_root;
+    repo->dottwig_path = dottwig_path;
+    repo->objects_path = objects_path;
+    repo->refs_path = refs_path;
+
+    return repo;
+}
+
+/* helpers */
+
+static int path_exists_and_is_dir(char *path) {
     struct stat st;
     if (stat(path, &st) != 0) {
         return 0;
@@ -14,7 +42,7 @@ int path_exists_and_is_dir(char *path) {
     return S_ISDIR(st.st_mode);
 }
 
-int path_exists_and_is_file(char *path) {
+static int path_exists_and_is_file(char *path) {
     struct stat st;
     if (stat(path, &st) != 0) {
         return 0;
@@ -22,31 +50,31 @@ int path_exists_and_is_file(char *path) {
     return S_ISREG(st.st_mode);
 }
 
-int is_curr_twig_repo(char *path) {
+static int is_curr_twig_repo(char *path) {
 
     // check if .twig directory exists
-    char buffer[PATH_MAX];
-    build_path(buffer, PATH_MAX, path, ".twig");
+    char *buffer;
+    buffer = build_path(path, ".twig");
     if (!path_exists_and_is_dir(buffer)) {
         return 0;
     }
 
-    build_path(buffer, PATH_MAX, path, ".twig/HEAD");
+    buffer = build_path(path, ".twig/HEAD");
     if (!path_exists_and_is_file(buffer)) {
         return 0;
     }
 
-    build_path(buffer, PATH_MAX, path, ".twig/objects");
+    buffer = build_path(path, ".twig/objects");
     if (!path_exists_and_is_dir(buffer)) {
         return 0;
     }
 
-    build_path(buffer, PATH_MAX, path, ".twig/refs/heads");
+    buffer = build_path(path, ".twig/refs/heads");
     if (!path_exists_and_is_dir(buffer)) {
         return 0;
     }
 
-    build_path(buffer, PATH_MAX, path, ".twig/refs/tags");
+    buffer = build_path(path, ".twig/refs/tags");
     if (!path_exists_and_is_dir(buffer)) {
         return 0;
     }
@@ -54,7 +82,7 @@ int is_curr_twig_repo(char *path) {
     return 1;
 }
 
-char *find_twig_repo(char *path) {
+static char *find_twig_repo(char *path) {
 
     char curr_path[strlen(path) + 1];
     strncpy(curr_path, path, strlen(path));
@@ -89,3 +117,5 @@ char *find_twig_repo(char *path) {
     return NULL;
 
 }
+
+

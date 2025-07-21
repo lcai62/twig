@@ -1,12 +1,17 @@
 #include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
+
 #include <sys/stat.h>
+#include <string.h>
+#include <unistd.h>
+#include <limits.h>
 
 
-void create_dir(char *path) {
-    if (mkdir(path, 0755) != 0) {
-        perror(path);
+
+void create_dir(char *abs_path) {
+    if (mkdir(abs_path, 0755) != 0) {
+        perror(abs_path);
         exit(1);
     }
 }
@@ -44,6 +49,15 @@ char *read_file(char *path) {
 }
 
 
-void build_path(char *buffer, size_t buffer_size, char *base, char *subpath) {
-    snprintf(buffer, buffer_size, "%s/%s", base, subpath);
+char *build_path(const char *base, const char *subpath) {
+    size_t len = strlen(base) + strlen(subpath) + 2; // '/' and '\0'
+    char *result = malloc(len);
+    snprintf(result, len, "%s/%s", base, subpath);
+    return result;
+}
+
+char *get_abs_cwd() {
+    char buf[PATH_MAX];
+    char *cwd = getcwd(buf, sizeof(buf));
+    return realpath(cwd, NULL);
 }

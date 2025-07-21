@@ -65,14 +65,10 @@ void twigobject_write(TwigObject *object, char *twig_root) {
 
     // check directory and file exists
     // .twig/objects/xx/yyyy... path
-    char dir_path[PATH_MAX];
-    char file_path[PATH_MAX];
-    char objects_path[PATH_MAX];
-
     char *objects_dir = ".twig/objects";
 
-    build_path(objects_path, PATH_MAX, twig_root, objects_dir);
-    fprintf(stderr, "objects dir: %s\n", dir_path);
+    char *objects_path = build_path(twig_root, objects_dir);
+    fprintf(stderr, "objects path: %s\n", objects_path);
 
     char subdir[3];
     strncpy(subdir, hex_hash, 2);
@@ -80,8 +76,8 @@ void twigobject_write(TwigObject *object, char *twig_root) {
 
     char *file_name = hex_hash + 2; // file name of object is hash without first byte
 
-    build_path(dir_path, PATH_MAX, objects_path, subdir);
-    build_path(file_path, PATH_MAX, dir_path, file_name);
+    char *dir_path = build_path(objects_path, subdir);
+    char *file_path = build_path(dir_path, file_name);
 
     fprintf(stderr, "dir path: %s\n", dir_path);
     fprintf(stderr, "file path: %s\n", file_path);

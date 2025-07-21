@@ -9,6 +9,8 @@ void create_dir(char *path);
 void write_file(char *path, char *content);
 char *read_file(char *path);
 
-void build_path(char *buffer, size_t buffer_size, char *base, char *subpath);
+char *get_abs_cwd();
+
+char *build_path(const char *base, const char *subpath);
 
 #endif //TWIG_UTILS_H

@@ -7,6 +7,10 @@
 
 int cmd_init(int argc, char **argv, Repo *repo) {
 
+    // shut the compiler up
+    (void) argc;
+    (void) argv;
+
     char *abs_cwd = get_abs_cwd();
 
     if (repo != NULL) {

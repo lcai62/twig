@@ -8,8 +8,6 @@
 
 static int is_curr_twig_repo(char *path);
 static char *find_twig_repo(char *path);
-static int path_exists_and_is_dir(char *path);
-static int path_exists_and_is_file(char *path);
 
 Repo *repo_open(char *rel_path) {
     char *abs_path = realpath(rel_path, NULL);
@@ -33,23 +31,6 @@ Repo *repo_open(char *rel_path) {
 }
 
 /* helpers */
-
-static int path_exists_and_is_dir(char *path) {
-    struct stat st;
-    if (stat(path, &st) != 0) {
-        return 0;
-    }
-    return S_ISDIR(st.st_mode);
-}
-
-static int path_exists_and_is_file(char *path) {
-    struct stat st;
-    if (stat(path, &st) != 0) {
-        return 0;
-    }
-    return S_ISREG(st.st_mode);
-}
-
 static int is_curr_twig_repo(char *path) {
 
     // check if .twig directory exists

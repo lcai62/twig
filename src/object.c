@@ -57,18 +57,13 @@ void twigobject_write(TwigObject *object, char *twig_root) {
 
     // format as hex string
     char hex_hash[SHA1_LENGTH * 2 + 1];
-    for (int i = 0; i < SHA1_LENGTH; i++) {
-        sprintf(hex_hash + i * 2, "%02x", object_hash[i]);
-    }
-    hex_hash[SHA1_LENGTH * 2] = '\0';
-    printf("object hash: %s\n", hex_hash);
+    sha1_to_hex(object_hash, hex_hash);
 
     // check directory and file exists
     // .twig/objects/xx/yyyy... path
     char *objects_dir = ".twig/objects";
 
     char *objects_path = build_path(twig_root, objects_dir);
-    fprintf(stderr, "objects path: %s\n", objects_path);
 
     char subdir[3];
     strncpy(subdir, hex_hash, 2);
@@ -78,9 +73,6 @@ void twigobject_write(TwigObject *object, char *twig_root) {
 
     char *dir_path = build_path(objects_path, subdir);
     char *file_path = build_path(dir_path, file_name);
-
-    fprintf(stderr, "dir path: %s\n", dir_path);
-    fprintf(stderr, "file path: %s\n", file_path);
 
     // create dir if needed
     struct stat st;

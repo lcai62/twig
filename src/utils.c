@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "object.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -8,6 +9,21 @@
 #include <limits.h>
 
 
+int path_exists_and_is_dir(char *path) {
+    struct stat st;
+    if (stat(path, &st) != 0) {
+        return 0;
+    }
+    return S_ISDIR(st.st_mode);
+}
+
+int path_exists_and_is_file(char *path) {
+    struct stat st;
+    if (stat(path, &st) != 0) {
+        return 0;
+    }
+    return S_ISREG(st.st_mode);
+}
 
 void create_dir(char *abs_path) {
     if (mkdir(abs_path, 0755) != 0) {
@@ -39,7 +55,9 @@ char *read_file(char *path) {
 
     char *content = malloc(sizeof(char) * file_size);
 
-    if (fread(content, 1, file_size, f) != file_size) {
+
+    size_t size_read = fread(content, 1, (size_t)file_size, f);
+    if (size_read != (size_t)file_size) {
         perror("fread");
         fclose(f);
         exit(1);
@@ -60,4 +78,11 @@ char *get_abs_cwd() {
     char buf[PATH_MAX];
     char *cwd = getcwd(buf, sizeof(buf));
     return realpath(cwd, NULL);
+}
+
+void sha1_to_hex(const unsigned char *hash, char *hex_out) {
+    for (int i = 0; i < SHA1_LENGTH; i++) {
+        sprintf(hex_out + i * 2, "%02x", hash[i]);
+    }
+    hex_out[SHA1_LENGTH * 2] = '\0';
 }

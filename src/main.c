@@ -7,6 +7,7 @@
 #include "cmd/cmd_init.h"
 #include "cmd/cmd_hash_object.h"
 #include "cmd/cmd_cat_file.h"
+#include "cmd/cmd_update_index.h"
 #include "repo.h"
 #include "utils.h"
 
@@ -17,7 +18,8 @@ static struct {
 } cmd_table[] = {
         {"init", cmd_init},
         {"hash-object", cmd_hash_object},
-        {"cat-file", cmd_cat_file}
+        {"cat-file", cmd_cat_file},
+        {"update-index", cmd_update_index}
 };
 
 

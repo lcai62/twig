@@ -16,5 +16,6 @@ char *get_abs_cwd();
 char *build_path(const char *base, const char *subpath);
 
 void sha1_to_hex(const unsigned char *hash, char *hex_out);
+void hex_to_sha1(const char *hex_str, unsigned char *sha1_out);
 
 #endif //TWIG_UTILS_H

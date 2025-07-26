@@ -80,9 +80,26 @@ char *get_abs_cwd() {
     return realpath(cwd, NULL);
 }
 
-void sha1_to_hex(const unsigned char *hash, char *hex_out) {
+void sha1_to_hex(const unsigned char *sha1_hash, char *hex_out) {
     for (int i = 0; i < SHA1_LENGTH; i++) {
-        sprintf(hex_out + i * 2, "%02x", hash[i]);
+        sprintf(hex_out + i * 2, "%02x", sha1_hash[i]);
     }
     hex_out[SHA1_LENGTH * 2] = '\0';
+}
+
+void hex_to_sha1(const char *hex_str, unsigned char *sha1_out) {
+    if (strlen(hex_str) != SHA1_LENGTH * 2) {
+        sha1_out = NULL;
+        fprintf(stderr, "--cacheinfo cannot add\n");
+        exit(1);
+    }
+
+    for (int i = 0; i < SHA1_LENGTH; i++) {
+        unsigned int byte;
+        if (sscanf(hex_str + (i * 2), "%2x", &byte) != 1) {
+            fprintf(stderr, "--cacheinfo cannot add\n");
+            exit(1);
+        }
+        sha1_out[i] = (unsigned char)byte;
+    }
 }

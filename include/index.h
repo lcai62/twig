@@ -23,5 +23,6 @@ typedef struct {
 } IndexEntry;
 
 int index_write_all(Repo *repo, IndexEntry *entries, int num_entries);
+int index_read_all(Repo *repo, IndexEntry **out_entries, int *out_num_entries);
 
 #endif //TWIG_INDEX_H

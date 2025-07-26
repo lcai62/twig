@@ -8,6 +8,7 @@
 #include "cmd/cmd_hash_object.h"
 #include "cmd/cmd_cat_file.h"
 #include "cmd/cmd_update_index.h"
+#include "cmd/cmd_ls_files.h"
 #include "repo.h"
 #include "utils.h"
 
@@ -19,7 +20,8 @@ static struct {
         {"init", cmd_init},
         {"hash-object", cmd_hash_object},
         {"cat-file", cmd_cat_file},
-        {"update-index", cmd_update_index}
+        {"update-index", cmd_update_index},
+        {"ls-files", cmd_ls_files},
 };
 
 

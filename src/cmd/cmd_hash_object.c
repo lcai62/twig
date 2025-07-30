@@ -24,46 +24,23 @@ int cmd_hash_object(int argc, char **argv, Repo *repo) {
     }
 
     if (optind >= argc) {
-        fprintf(stderr, "Expected file path after options\n");
         fprintf(stderr, "Usage: twig hash-object [-w] <file>\n");
         return 1;
     }
 
     char *file_name = argv[optind];
+    unsigned char sha1[SHA1_LENGTH];
 
-    // check if file exists
-    if (!path_exists_and_is_file(file_name)) {
-        perror(file_name);
+    if (hash_file_as_blob(repo, file_name, write_flag, sha1) != 0) {
+        perror("hash-object");
         return 1;
     }
 
-    char *file_path = realpath(file_name, NULL);
 
-    // read file contents
-    char *file_contents = read_file(file_path);
-
-    // build blob object
-    TwigObject blob;
-    blob.type = OBJ_BLOB;
-    blob.contents = (unsigned char *) file_contents;
-    blob.content_size = strlen(file_contents);
-
-    // calculate hash
-    unsigned char hash[SHA1_LENGTH];
-    twigobject_hash(&blob, hash);
-
+    // convert hash
     char hex_hash[SHA1_LENGTH * 2 + 1];
-    sha1_to_hex(hash, hex_hash);
-
+    sha1_to_hex(sha1, hex_hash);
     printf("%s\n", hex_hash);
-
-    if (write_flag) {
-        twigobject_write(&blob, repo->root_path);
-    }
-
-    free(file_contents);
-    free(file_path);
-
     return 0;
 
 }

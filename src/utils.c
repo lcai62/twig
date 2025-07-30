@@ -7,6 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
+#include <stdint.h>
 
 
 int path_exists_and_is_dir(char *path) {
@@ -102,4 +103,27 @@ void hex_to_sha1(const char *hex_str, unsigned char *sha1_out) {
         }
         sha1_out[i] = (unsigned char)byte;
     }
+}
+
+
+uint32_t mode_for_path(const char *path) {
+    struct stat st;
+    if (stat(path, &st) != 0) {
+        fprintf(stderr, "mode_for_path: file not found\n");
+        exit(1);
+    }
+
+    if (S_ISLNK(st.st_mode)) {
+        return 0120000; // symb link
+    }
+    if (S_ISDIR(st.st_mode)) {
+        return 0040000; // directory
+    }
+
+    // executable file
+    if (st.st_mode & 0111) {
+        return 0100755;
+    }
+
+    return 0100644; // reg file
 }

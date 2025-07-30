@@ -8,6 +8,8 @@
 #include <openssl/sha.h>
 #include <zlib.h>
 #include <sys/stat.h>
+#include "repo.h"
+#include <errno.h>
 
 
 char *object_to_string(enum TwigObjectType type) {
@@ -220,3 +222,26 @@ TwigObject *twigobject_read(char *hex_hash, char *twig_root) {
 }
 
 
+int hash_file_as_blob(Repo *repo, char *file_name, int write, unsigned char *out_sha1) {
+    if (!path_exists_and_is_file(file_name)) {
+        perror(file_name);
+        return -1;
+    }
+
+    char *file_path = realpath(file_name, NULL);
+    char *file_contents = read_file(file_path);
+
+    TwigObject blob;
+    blob.type = OBJ_BLOB;
+    blob.contents = (unsigned char *) file_contents;
+    blob.content_size = strlen(file_contents);
+
+    twigobject_hash(&blob, out_sha1);
+
+    if (write) {
+        twigobject_write(&blob, repo->root_path);
+    }
+
+    free(file_contents);
+    return 0;
+}

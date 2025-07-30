@@ -2,6 +2,7 @@
 #define TWIG_UTILS_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 int path_exists_and_is_dir(char *path);
 int path_exists_and_is_file(char *path);
@@ -17,5 +18,7 @@ char *build_path(const char *base, const char *subpath);
 
 void sha1_to_hex(const unsigned char *hash, char *hex_out);
 void hex_to_sha1(const char *hex_str, unsigned char *sha1_out);
+
+uint32_t mode_for_path(const char *path);
 
 #endif //TWIG_UTILS_H

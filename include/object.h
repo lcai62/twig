@@ -2,6 +2,7 @@
 #define TWIG_OBJECT_H
 
 #include <stddef.h>
+#include "repo.h"
 
 #define SHA1_LENGTH 20
 #define SHA1_STR_LENGTH 40
@@ -42,5 +43,7 @@ TwigObject *twigobject_read(char *hash, char *twig_root);
  * Converts a TwigObjectType into its string representation in the header
  */
 char *object_to_string(enum TwigObjectType type);
+
+int hash_file_as_blob(Repo *repo, char *path, int write, unsigned char *out_sha1);
 
 #endif //TWIG_OBJECT_H

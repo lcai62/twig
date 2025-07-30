@@ -9,6 +9,7 @@
 #include "cmd/cmd_cat_file.h"
 #include "cmd/cmd_update_index.h"
 #include "cmd/cmd_ls_files.h"
+#include "cmd/cmd_add.h"
 #include "repo.h"
 #include "utils.h"
 
@@ -22,6 +23,7 @@ static struct {
         {"cat-file", cmd_cat_file},
         {"update-index", cmd_update_index},
         {"ls-files", cmd_ls_files},
+        {"add", cmd_add},
 };
 
 

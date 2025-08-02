@@ -199,6 +199,28 @@ TwigObject *twigobject_read(char *hex_hash, char *twig_root) {
         return NULL;
     }
 
+    char *space = memchr(deflated_contents, ' ', header_len);
+    if (!space) {
+        fprintf(stderr, "corrupt object\n");
+        return NULL;
+    }
+
+    size_t type_len = space - (char *)deflated_contents;
+
+    enum TwigObjectType obj_type;
+    if (type_len == 4 && !memcmp(deflated_contents, "blob", 4)) {
+        obj_type = OBJ_BLOB;
+    }
+    else if (type_len == 4 && !memcmp(deflated_contents, "tree", 4)) {
+        obj_type = OBJ_TREE;
+    }
+    else if (type_len == 6 && !memcmp(deflated_contents, "commit", 4)) {
+        obj_type = OBJ_COMMIT;
+    }
+    else if (type_len == 3 && !memcmp(deflated_contents, "tag", 4)) {
+        obj_type = OBJ_TAG;
+    }
+
     int payload_length = used - (header_len + 1); // for null character
     unsigned char *payload = deflated_contents + header_len + 1;
 
@@ -213,7 +235,7 @@ TwigObject *twigobject_read(char *hex_hash, char *twig_root) {
 
     TwigObject *twigObject = malloc(sizeof(TwigObject));
     twigObject->content_size = payload_length;
-    twigObject->type = OBJ_BLOB;
+    twigObject->type = obj_type;
     twigObject->contents = malloc(payload_length);
     memcpy(twigObject->contents, payload, payload_length);
 

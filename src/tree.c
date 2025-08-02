@@ -17,6 +17,9 @@ static void build_flat_tree_node(Repo *repo, IndexEntry *entries, int first, int
         payload_length += SHA1_LENGTH;
     }
 
+    /* format: 
+        <mode as octal><space><name><NULL><20 byte sha1>
+    */
     unsigned char *buffer = malloc(payload_length);
     unsigned char *curr = buffer;
 

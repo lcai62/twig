@@ -3,21 +3,22 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
-int path_exists_and_is_dir(char *path);
-int path_exists_and_is_file(char *path);
+bool path_exists_and_is_dir(char *path);
+bool path_exists_and_is_file(char *path);
 
-void create_dir(char *path);
+int create_dir(char *path);
 
-void write_file(char *path, char *content);
+int write_file(char *path, char *content);
 char *read_file(char *path);
 
 char *get_abs_cwd();
 
 char *build_path(const char *base, const char *subpath);
 
-void sha1_to_hex(const unsigned char *hash, char *hex_out);
-void hex_to_sha1(const char *hex_str, unsigned char *sha1_out);
+int sha1_to_hex(const unsigned char *hash, char *hex_out);
+int hex_to_sha1(const char *hex_str, unsigned char *sha1_out);
 
 uint32_t mode_for_path(const char *path);
 

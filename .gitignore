@@ -3,3 +3,8 @@
 .twig/
 twig
 cmake-build-debug
+.vscode/*
+coverage_report
+*.gcno
+*.gcda
+coverage.info

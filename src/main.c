@@ -12,6 +12,7 @@
 #include "cmd/cmd_ls_tree.h"
 #include "cmd/cmd_add.h"
 #include "cmd/cmd_write_tree.h"
+#include "cmd/cmd_commit_tree.h"
 #include "repo.h"
 #include "utils.h"
 
@@ -28,6 +29,7 @@ static struct {
         {"ls-tree", cmd_ls_tree},
         {"add", cmd_add},
         {"write-tree", cmd_write_tree},
+        {"commit-tree", cmd_commit_tree},
 };
 
 

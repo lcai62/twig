@@ -22,4 +22,6 @@ int hex_to_sha1(const char *hex_str, unsigned char *sha1_out);
 
 uint32_t mode_for_path(const char *path);
 
+void _mkdir(const char *dir);
+
 #endif //TWIG_UTILS_H

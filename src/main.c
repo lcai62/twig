@@ -13,6 +13,7 @@
 #include "cmd/cmd_add.h"
 #include "cmd/cmd_write_tree.h"
 #include "cmd/cmd_commit_tree.h"
+#include "cmd/cmd_update_ref.h"
 #include "repo.h"
 #include "utils.h"
 
@@ -30,6 +31,7 @@ static struct {
         {"add", cmd_add},
         {"write-tree", cmd_write_tree},
         {"commit-tree", cmd_commit_tree},
+        {"update-ref", cmd_update_ref},
 };
 
 
